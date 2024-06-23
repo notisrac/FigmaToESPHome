@@ -1,0 +1,280 @@
+/* CSS is based on the work of Andrey: https://codepen.io/McXinuS/pen/yMqJLd */
+
+body {
+    font-family: sans-serif;
+}
+
+#settings-form {
+    width: 50vw;
+    margin: 0 auto;
+    /* background-color: #fcfcfc; */
+    /* box-shadow: 1px 4px 10px 1px #aaa; */
+    padding: 20px 50px 40px;
+}
+
+#settings-form * {
+    box-sizing: border-box;
+}
+
+#settings-form h2 {
+    color: #414141;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#settings-form h4 {
+    color: #727272;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: smaller;
+}
+
+#settings-form input {
+    margin-bottom: 15px;
+}
+
+#settings-form input[type=text] {
+    display: block;
+    height: 32px;
+    padding: 6px 16px;
+    width: 100%;
+    border: none;
+    background-color: #f3f3f3;
+}
+
+#settings-form input[type=text]:focus, #settings-form textarea {
+    outline:none;
+    border: 2px solid #207cca;
+}
+
+#settings-form input[type=text]#input_length {
+    width: 150px;
+    display: inline;
+}
+
+#settings-form label {
+    color: #555;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+#settings-form label .info {
+    padding-left: 10px;
+    color: #727272;
+    font-size: 0.7em;
+}
+
+#settings-form label .info a:link {
+    text-decoration: none;
+    color: #207cca;
+}
+
+#settings-form label .info a:visited {
+    text-decoration: none;
+    color: #207cca;
+}
+
+#settings-form label .info a:hover {
+    text-decoration: underline;
+    color: #207cca;
+}
+
+#settings-form label .info a:active {
+    text-decoration: none;
+    color: #207cca;
+}
+
+#settings-form button[type=submit] {
+    display: block;
+    margin: 20px auto 20px;
+    width: 150px;
+    height: 40px;
+    border-radius: 1px;
+    border: none;
+    color: #eee;
+    font-weight: 700;
+    box-shadow: 1px 4px 10px 1px #aaa;
+    cursor: pointer;
+
+    background: #207cca;
+}
+
+
+
+
+#footer {
+    width: 95vw;
+    margin: 0 auto;
+    /* background-color: #fcfcfc; */
+    /* box-shadow: 1px 4px 10px 1px #aaa; */
+    padding: 20px 0;
+    font-family: sans-serif;
+}
+
+#copyright {
+    display: block;
+    margin: 10px auto 0;
+    width: 100%;
+    color: #777;
+    text-align: end;
+    font-size: medium;
+    font-weight: bold;
+}
+
+#copyright img {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+}
+
+
+#copyright a:link {
+    text-decoration: none;
+    color: #777;
+}
+
+#copyright a:visited {
+    text-decoration: none;
+    color: #777;
+}
+
+#copyright a:hover {
+    text-decoration: underline;
+    color: #777;
+}
+
+#copyright a:active {
+    text-decoration: none;
+    color: #777;
+}
+
+
+
+#results {
+    width: 97vw;
+    height: 100%;
+}
+
+#results pre {
+    margin: 0;
+    position: relative;
+}
+
+#results code {
+    background-color: #eee;
+    border: 1px solid #999;
+    display: block;
+    /* padding: 20px; */
+    width: 100%;
+    height: 300px;
+    overflow: scroll;
+}
+
+#results .title {
+    color: #414141;
+    font-size: medium;
+    font-weight: bolder;
+    display: block;
+}
+
+#results .result_info {
+    color: #727272;
+    font-size: small;
+    padding-bottom: -5px;
+    font-weight: normal;
+}
+
+.copy_result {
+    display: block;
+    /* margin: 1px auto 0; */
+    color: #777;
+    text-align: end;
+    font-size: x-small;
+    position: absolute;
+    right: -10px;
+    top: 0px;
+    border: none;
+}
+
+.copy_result_button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+
+
+
+.download {
+    width: 100%;
+}
+
+.download ul {
+    list-style: none;
+    display: grid;
+    width: 700px;
+    padding-left: 30px;
+}
+
+.download li {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+    height: 60px;
+}
+
+.download .item_info_group {
+    align-items: center;
+    display: flex;
+}
+
+.download .item_info_group .icon {
+    align-self: center;
+    width: 32px;
+    height: 32px;
+    padding: 0 5px 0 0;
+}
+
+.download .item_info_group h3 {
+    color: #414141;
+    font-size: small;
+    font-weight: 600;
+    line-height: 1;
+    margin-bottom: 2px;
+}
+
+.download .item_info_group .file_info {
+    color: #727272;
+    font-size: smaller;
+    line-height: 1;
+}
+
+.download button {
+    margin: 20px auto 20px;
+    width: 150px;
+    height: 40px;
+    border-radius: 1px;
+    border: 1px solid #ddd;
+    padding: 0;
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1em;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+
+
+.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.hidden {
+    display: none;
+}
