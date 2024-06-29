@@ -60,6 +60,8 @@ export class Node {
             throw new Error(`Node type mismatch: expected "${nodeType}", got "${type}"!`);
         }
 
+        console.log(`${nodeType} - id: "${id}", name: "${nodeName}"`);
+
         return new Node(id, nodeName, nodeType, x, y, width, height, node);
     }
 }

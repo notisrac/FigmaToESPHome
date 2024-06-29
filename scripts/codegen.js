@@ -368,7 +368,6 @@ export class CodeGenerator{
         const thisNode = Node.create(node, parentNode, 'COMPONENT');
 
         // "id": "40:92"
-        console.log(thisNode.id);
 
         const func = new Function(thisNode.name, thisNode.id);
         // standard parameters

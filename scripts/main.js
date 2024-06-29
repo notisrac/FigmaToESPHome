@@ -151,7 +151,8 @@ generateBtn.addEventListener('click', () => {
             liNode.appendChild(downloadButton);
             downloadItems.appendChild(liNode);
         }
-        console.log(`generate time: ${generatedData['generateTime']}s`);
+        console.log('');
+        console.log(`Done. (${generatedData['generateTime']}s)`);
 
         // do the code highlight
         hljs.highlightAll();
