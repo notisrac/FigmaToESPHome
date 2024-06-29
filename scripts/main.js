@@ -9,15 +9,15 @@ function disableControls() {
     toggleElements([generateBtn, textFigmaUrl, textFigmaApiToken, textFigmaFileKey, textPageName, textFrameName], true);
 }
 
-function showResults() {
-    if (results.classList.contains('hidden')) {
-        results.classList.remove('hidden');
+function showElement(element) {
+    if (element.classList.contains('hidden')) {
+        element.classList.remove('hidden');
     }
 }
 
-function hideResults() {
-    if (!results.classList.contains('hidden')) {
-        results.classList.add('hidden');
+function hideElement(element) {
+    if (!element.classList.contains('hidden')) {
+        element.classList.add('hidden');
     }
 }
 
@@ -39,6 +39,8 @@ function valueFromQueryParam(urlParams, elements) {
     }
 }
 
+
+
 function reset() {
     // clear the generated codes and unset the highlighted attribute
     ymlBlob.textContent = '';
@@ -58,7 +60,9 @@ function reset() {
         downloadItems.removeChild(downloadItems.firstChild);
     }
     // hide the results
-    hideResults();
+    hideElement(results);
+    // hide the erros
+    hideElement(errors);
     // revoke all the image urls
     for (const url of urlList) {
         URL.revokeObjectURL(url);
@@ -78,8 +82,9 @@ valueFromQueryParam(urlParams, [textFigmaUrl, textFigmaApiToken, textFigmaFileKe
 const ymlBlob = document.getElementById('ymlBlob');
 const functionBlob = document.getElementById('functionBlob');
 const codeBlob = document.getElementById('codeBlob');
-const downloadedFiles = document.getElementById('downloadedFiles');
 const results = document.getElementById('results');
+const errors = document.getElementById('errors');
+const errorBlob = document.getElementById('errorBlob');
 
 const generateBtn = document.getElementById('generateBtn');
 
@@ -99,7 +104,8 @@ for (const btn of copyResultButtons) {
 const urlList = new Array();
 
 enableControls();
-hideResults();
+hideElement(results);
+hideElement(errors);
 
 generateBtn.addEventListener('click', () => {
     reset();
@@ -151,9 +157,11 @@ generateBtn.addEventListener('click', () => {
         hljs.highlightAll();
         // re-enable the controle and show the results
         enableControls();
-        showResults();
+        showElement(results);
     }).catch((err) => {
         enableControls();
+        showElement(errors);
+        errorBlob.textContent = err;
         console.error(err);
     });
 

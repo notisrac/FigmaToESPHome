@@ -269,6 +269,27 @@ body {
 
 
 
+#errors {
+    /* width: 60vw; */
+    height: 100%;
+}
+
+#errors pre {
+    margin: 0;
+    position: relative;
+}
+
+#errors code {
+    color: #8d0000;
+    background-color: #eee;
+    border: 1px solid #ff0000;
+    display: block;
+    padding: 10px;
+    width: 100%;
+    height: 100px;
+    overflow: scroll;
+}
+
 
 .disabled {
     opacity: 0.6;
