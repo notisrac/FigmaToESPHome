@@ -29,7 +29,7 @@
             </div>
         </div>
     
-        <div id="results">
+        <div id="results" class="hidden">
             <span class="title">YML</span>
             <span class="result_info">Copy these lines into your main ESPHome YML file, or save them in a new .yml file and include that in your main YML</span>
             <pre>
@@ -98,11 +98,15 @@
             }
 
             function showResults() {
-                results.classList.remove('hidden');
+                if (results.classList.contains('hidden')) {
+                    results.classList.remove('hidden');
+                }
             }
 
             function hideResults() {
-                results.classList.add('hidden');
+                if (!results.classList.contains('hidden')) {
+                    results.classList.add('hidden');
+                }
             }
 
             function toggleElements(elements, disable) {
