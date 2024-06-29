@@ -145,11 +145,13 @@ export class CodeGenerator{
         // download image files
         const downloadedFiles = this.imageFiles;
 
+        const generatedWithMessage = 'Generated with https://notisrac.github.io/FigmaToESPHome/'
+
         // generate code lines from the functions
-        const functionBlob = this.generatedCode.functions.join('\r\n');
+        const functionBlob = `// ${generatedWithMessage}\r\n` + this.generatedCode.functions.join('\r\n');
 
         // generate code lines blob
-        let codeBlob = '// TODO assign values to these:\r\n';
+        let codeBlob = `// ${generatedWithMessage}\r\n\r\n` + '// TODO assign values to these:\r\n';
         codeBlob += this.generatedCode.variableLines.join('\r\n');
         codeBlob += '\r\n';
         codeBlob += this.generatedCode.codeLines.join('\r\n');
@@ -160,7 +162,7 @@ export class CodeGenerator{
         });
 
         // generate code from yml lines
-        const ymlBlob = this.ymlLines.join('\r\n');
+        const ymlBlob = `# ${generatedWithMessage}\r\n` + this.ymlLines.join('\r\n');
 
         const endTime = Date.now();
 
@@ -183,7 +185,7 @@ export class CodeGenerator{
         this.frame = this.document.frame;
     
         // TODO add background color/fill
-    
+
         this.generatedCode.addVariable('auto x = 0;');
         this.generatedCode.addVariable('auto y = 0;');
         
@@ -327,7 +329,7 @@ export class CodeGenerator{
         const imageId = `image_${sanitizedName}`;
 
         this.addYml('');
-        this.addYml(`// ${name}`);
+        this.addYml(`# ${name}`);
         this.addYml('image:');
         this.addYml(`  - file: images/${name}.png`);
         this.addYml(`    id: ${imageId}`);
