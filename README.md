@@ -1,6 +1,15 @@
 # Figma to ESPHome display code generator
 Generates YML and C++ code for an [ESPHome display](https://esphome.io/components/display/) from a Figma document
 
+
+TODO add "before and after" picture
+
+## Features
+ - Convert a Figma Ui design into code usable in an ESPHome display project
+ - Supports Text, Line, Rectangle, Component, Instance, Group, Intance swap, etc.
+ - Generates font definitions with only the actually used glyphs (to reduce built binary size)
+ - Supports uploaded images
+
 ## Use it here: [https://notisrac.github.io/FigmaToESPHome/](https://notisrac.github.io/FigmaToESPHome/)
 
 ## How to use
@@ -41,6 +50,10 @@ What to do with the results
 
 ### YML
 Copy these lines into your main ESPHome YML file, or save them in a new .yml file and include that in your main YML like [this](https://esphome.io/guides/configuration-types.html#yaml-insertion-operator)
+
+Check all the generated font code: you will need to provide the font file path for each. Also the generator will add only the glyphs that are used in the design - if you need more, add them to the list of the respective font definition.
+This is the default glyph set:
+```!"%()+=,-_.:;°0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz\'/&|``` _Note: the amount of glyphs used for a font wil impact the final binary size!_
 
 ### C++ functions
 It is best to create a new .h file for these functions, then ```#include "./thatfile.h"``` in your main ESPHome display lambda code section
