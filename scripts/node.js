@@ -50,10 +50,10 @@ export class Node {
 
         const id = node['id'];
         const nodeName = node['name'];
-        const x = node['absoluteBoundingBox']['x'] - parentNode['absoluteBoundingBox']['x'];
-        const y = node['absoluteBoundingBox']['y'] - parentNode['absoluteBoundingBox']['y'];
-        const width = node['absoluteBoundingBox']['width'];
-        const height = node['absoluteBoundingBox']['height'];
+        const x = Math.round(node['absoluteBoundingBox']['x'] - parentNode['absoluteBoundingBox']['x']);
+        const y = Math.round(node['absoluteBoundingBox']['y'] - parentNode['absoluteBoundingBox']['y']);
+        const width = Math.round(node['absoluteBoundingBox']['width']);
+        const height = Math.round(node['absoluteBoundingBox']['height']);
         const nodeType = node['type'];
 
         if (nodeType !== type) {

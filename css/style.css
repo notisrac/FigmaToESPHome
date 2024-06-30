@@ -117,13 +117,13 @@ body {
     width: 100%;
     color: #777;
     text-align: end;
-    font-size: medium;
-    font-weight: bold;
+    font-size: small;
+    font-weight: normal;
 }
 
 #copyright img {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     vertical-align: middle;
 }
 

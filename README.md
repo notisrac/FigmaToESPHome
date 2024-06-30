@@ -51,7 +51,7 @@ What to do with the results
 ### YML
 Copy these lines into your main ESPHome YML file, or save them in a new .yml file and include that in your main YML like [this](https://esphome.io/guides/configuration-types.html#yaml-insertion-operator)
 
-Check all the generated font code: you will need to provide the font file path for each. Also the generator will add only the glyphs that are used in the design - if you need more, add them to the list of the respective font definition.
+Check all the generated font code: you will need to provide the font file path for each (replace the `#ADD FONT FILE NAME HERE#` placeholders). Also the generator will add only the glyphs that are used in the design - if you need more, add them to the list of the respective font definition.
 This is the default glyph set:
 ```!"%()+=,-_.:;°0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz\'/&|``` _Note: the amount of glyphs used for a font wil impact the final binary size!_
 

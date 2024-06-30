@@ -2,7 +2,7 @@ import { FigmaClient } from "./figma_client.js";
 import { Document } from "./document.js";
 import { ImageFile } from "./image_file.js";
 import { Font } from "./font.js";
-import { Function } from "./function.js";
+import { Function, FuncParam, ParamTypes } from "./function.js";
 import { Node } from "./node.js";
 import { GeneratedCode } from "./generated_code.js";
 
@@ -102,8 +102,8 @@ export class CodeGenerator{
         return func;
     }
 
-    async addImageFile(name, fileName, dataBuffer) {
-        const imageFile = await ImageFile.fromArrayBuffer(name, fileName, dataBuffer);
+    async addImageFile(name, fileName, dataBuffer, width, height) {
+        const imageFile = await ImageFile.fromArrayBuffer(name, fileName, dataBuffer, width, height);
         this.imageFiles.push(imageFile);
         return imageFile;
     }
@@ -121,7 +121,9 @@ export class CodeGenerator{
         const generatedWithMessage = 'Generated with https://notisrac.github.io/FigmaToESPHome/'
 
         // generate code lines from the functions
-        const functionBlob = `// ${generatedWithMessage}\r\n` + this.generatedCode.functions.join('\r\n');
+        const functionBlob = `// ${generatedWithMessage}\r\n\r\n`
+         + '#include <string>\r\n'
+         + this.generatedCode.functions.join('\r\n');
 
         // generate code lines blob
         let codeBlob = `// ${generatedWithMessage}\r\n\r\n` + '// TODO assign values to these:\r\n';
@@ -303,7 +305,7 @@ export class CodeGenerator{
     async processImage(name, x, y, width, height, imageRef, generatedCode) {
         // download the file
         const imageDataBuffer = await this.figmaClient.downloadImage(imageRef, this.fileKey);
-        const imageFile = await this.addImageFile(name, name, imageDataBuffer);
+        const imageFile = await this.addImageFile(name, name, imageDataBuffer, width, height);
 
         // generatedCode.addCode('');
         generatedCode.addCode(`it.image(x + ${x}, y + ${y}, id(${imageFile.imageId}));`);
@@ -342,10 +344,10 @@ export class CodeGenerator{
 
         const func = new Function(thisNode.name, thisNode.id);
         // standard parameters
-        func.addParameter('x');
-        func.addParameter('y');
-        func.addParameter('width');
-        func.addParameter('height');
+        func.addParameter('x', ParamTypes.int);
+        func.addParameter('y', ParamTypes.int);
+        func.addParameter('width', ParamTypes.int);
+        func.addParameter('height', ParamTypes.int);
         // collect the list of ids to skip - this prevents adding the function call to the default instance swap value
         const skipList = new Array();
         // parameters
@@ -353,12 +355,12 @@ export class CodeGenerator{
         if (componentPropertyDefinitions) {
             const propNames = Object.getOwnPropertyNames(componentPropertyDefinitions);
             for (let j = 0; j < propNames.length; j++) {
-                const param = componentPropertyDefinitions[propNames[j]];
-                const paramName = func.addParameter(propNames[j]);
-                if (param['type'] === 'INSTANCE_SWAP') {
+                const paramNode = componentPropertyDefinitions[propNames[j]];
+                const newParam = func.addParameter(propNames[j], ParamTypes.string);
+                if (paramNode['type'] === 'INSTANCE_SWAP') {
                     // handle instance swap
-                    const defaultValue = param['defaultValue'];
-                    const preferredValues = param['preferredValues'];
+                    const defaultValue = paramNode['defaultValue'];
+                    const preferredValues = paramNode['preferredValues'];
                     const valueFuncList = {};
                     // collect all the instances
                     for (let i = 0; i < preferredValues.length; i++) {
@@ -385,23 +387,27 @@ export class CodeGenerator{
                         }
                         valueFuncList[component['name']] = funcForComponent;
                     }
-                    // create the switch case
+                    // create the "switch case"
                     func.addLine('');
-                    func.addLine(`switch (${paramName}) {`);
                     const valueNames = Object.getOwnPropertyNames(valueFuncList);
+                    if (valueNames.length == 0) {
+                        continue;
+                    }
                     for (let k = 0; k < valueNames.length; k++) {
-                        const element = valueNames[k];
-                        const componentName = element;
-                        const funcToCall = valueFuncList[element];
-                        func.addLine(`    case '${componentName}':`);
-                        func.addLine(`        ${funcToCall.name}(x, y, ${funcToCall.parameters.slice(2).join(', ')});`);
-                        func.addLine('        break;');
+                        const componentName = valueNames[k];
+                        const funcToCall = valueFuncList[componentName];
+                        // remove the path from the component name: "Icons/Weather/weather-lightning-rainy" -> "weather-lightning-rainy"
+                        const shortenedComponentName = componentName.slice(componentName.lastIndexOf('/') + 1);
+                        func.addLine(`${(k > 0) ? 'else ' : ''}if (${newParam.name} == "${shortenedComponentName}") {`);
+                        func.addLine(`  // ${componentName}`);
+                        func.addLine(`  ${funcToCall.name}(x, y, ${funcToCall.parameters.slice(2).map((p) => p.name).join(', ')});`);
+                        func.addLine('}');
                     };
                     // handle the default value
                     const funcForDefaultComponent = await this.getFunction(defaultValue, thisNode.source);
-                    func.addLine('    default:');
-                    func.addLine(`        ${funcForDefaultComponent.name}(x, y, ${funcForDefaultComponent.parameters.slice(2).join(', ')});`);
-                    func.addLine('        break;');
+                    func.addLine('else {');
+                    func.addLine('  // default');
+                    func.addLine(`  ${funcForDefaultComponent.name}(x, y, ${funcForDefaultComponent.parameters.slice(2).map((p) => p.name).join(', ')});`);
                     func.addLine('}');
                 }
             };
@@ -460,7 +466,7 @@ export class CodeGenerator{
         const componentId = thisNode.source['componentId'];
         // const overrides = node['overrides'];
         let func = await this.getFunction(componentId, node);
-        const funcExtraParams = func.parameters.slice(4);
+        const funcExtraParams = func.parameters.slice(4).map((p) => p.name);
         if (funcExtraParams) {
             for (let i = 0; i < funcExtraParams.length; i++) {
                 const paramName = `${thisNode.sanitizedName}_${funcExtraParams[i]}`;
