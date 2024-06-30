@@ -59,15 +59,15 @@ export class Font extends BaseElement{
         const glyphList = new Array();
         this.glyphs.forEach(element => {
             glyphList.push(`
-    - '${element.toString()}'`);
+        - '${element.toString()}'`);
         });
 
         return `
-# ${this.name}
-- file: '${this.fileName}'
-  id: ${this.id}
-  size: ${this.size}
-  glyphs: ${glyphList.join('')}
-`
+    # ${this.name}
+    - file: '${this.fileName}'
+      id: ${this.id}
+      size: ${this.size}
+      glyphs: ${glyphList.join('')}
+    `
     }
 }

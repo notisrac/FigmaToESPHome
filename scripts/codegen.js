@@ -1,63 +1,43 @@
 import { FigmaClient } from "./figma_client.js";
 import { Document } from "./document.js";
-import { File } from "./file.js";
+import { ImageFile } from "./image_file.js";
 import { Font } from "./font.js";
 import { Function } from "./function.js";
 import { Node } from "./node.js";
+import { GeneratedCode } from "./generated_code.js";
+
 
 /*
 {
-	"document": {
-		"id": "0:0",
-		"name": "Document",
-		"type": "DOCUMENT",
-		"scrollBehavior": "SCROLLS",
-		"children": [
+    "document": {
+        "id": "0:0",
+        "name": "Document",
+        "type": "DOCUMENT",
+        "scrollBehavior": "SCROLLS",
+        "children": [
         ]
-	},
-	"components": {
-		"40:87": {
-			"key": "9d70b403...",
-			"name": "Icons/sofa",
-			"description": "",
-			"remote": false,
-			"documentationLinks": []
-		}
-	},
-	"componentSets": {},
-	"schemaVersion": 0,
-	"styles": {},
-	"name": "home assistant display",
-	"lastModified": "2024-06-10T08:10:56Z",
-	"thumbnailUrl": "https://s3-alpha.figma.com/thumbnails/....",
-	"version": "5958322934",
-	"role": "owner",
-	"editorType": "figma",
-	"linkAccess": "view"
+    },
+    "components": {
+        "40:87": {
+            "key": "9d70b403...",
+            "name": "Icons/sofa",
+            "description": "",
+            "remote": false,
+            "documentationLinks": []
+        }
+    },
+    "componentSets": {},
+    "schemaVersion": 0,
+    "styles": {},
+    "name": "home assistant display",
+    "lastModified": "2024-06-10T08:10:56Z",
+    "thumbnailUrl": "https://s3-alpha.figma.com/thumbnails/....",
+    "version": "5958322934",
+    "role": "owner",
+    "editorType": "figma",
+    "linkAccess": "view"
 }
 */
-
-class GeneratedCode {
-    functions = new Array();
-    codeLines = new Array();
-    variableLines = new Array();
-
-    getFunction(componentId) {
-        return this.functions.find((element) => element && element.componentId === componentId);
-    }
-
-    addFunction(func) {
-        this.functions.push(func);
-    }
-
-    addCode(...line) {
-        this.codeLines.push(...line);
-    }
-
-    addVariable(...line) {
-        this.variableLines.push(...line);
-    }
-}
 
 export class CodeGenerator{
     figmaUrl = null
@@ -66,9 +46,6 @@ export class CodeGenerator{
     pageName = null
     frameName = null
 
-    // codeFunctions = new Array();
-    // codeLines = new Array();
-    ymlLines = new Array();
     fonts = new Object();
     imageFiles = new Array();
     generatedCode = new GeneratedCode();
@@ -109,10 +86,6 @@ export class CodeGenerator{
         return name.substring('var_'.length);
     }
 
-    addYml(line) {
-        this.ymlLines.push(line);
-    }
-
     /**
      * Fetches the generated function for the component. If it does not exists yet, then creates it
      * @param {string} componentId id of the component
@@ -130,9 +103,9 @@ export class CodeGenerator{
     }
 
     async addImageFile(name, fileName, dataBuffer) {
-        const imageFile = await File.fromArrayBuffer(name, fileName, dataBuffer);
+        const imageFile = await ImageFile.fromArrayBuffer(name, fileName, dataBuffer);
         this.imageFiles.push(imageFile);
-        return imageFile.name;
+        return imageFile;
     }
 
     async generate() {
@@ -156,13 +129,19 @@ export class CodeGenerator{
         codeBlob += '\r\n';
         codeBlob += this.generatedCode.codeLines.join('\r\n');
 
-        // generate yml lines from the fonts
-        Object.getOwnPropertyNames(this.fonts).forEach(fontName => {
-            this.ymlLines.push(this.fonts[fontName].toYml());
-        });
-
         // generate code from yml lines
-        const ymlBlob = `# ${generatedWithMessage}\r\n` + this.ymlLines.join('\r\n');
+        let ymlBlob = `# ${generatedWithMessage}\r\n\r\n`;
+        // generate yml lines for the images
+        ymlBlob += 'image:';
+        for (const img of this.imageFiles) {
+            ymlBlob += img.toYml();
+        }
+        ymlBlob += '\r\n\r\n';
+        // generate yml lines from the fonts
+        ymlBlob += 'font:';
+        Object.getOwnPropertyNames(this.fonts).forEach(fontName => {
+            ymlBlob += this.fonts[fontName].toYml();
+        });
 
         const endTime = Date.now();
 
@@ -324,20 +303,10 @@ export class CodeGenerator{
     async processImage(name, x, y, width, height, imageRef, generatedCode) {
         // download the file
         const imageDataBuffer = await this.figmaClient.downloadImage(imageRef, this.fileKey);
-        const sanitizedName = await this.addImageFile(name, name, imageDataBuffer);
-
-        const imageId = `image_${sanitizedName}`;
-
-        this.addYml('');
-        this.addYml(`# ${name}`);
-        this.addYml('image:');
-        this.addYml(`  - file: images/${name}.png`);
-        this.addYml(`    id: ${imageId}`);
-        this.addYml(`    resize: ${width}x${height}`);
-        this.addYml('    type: TRANSPARENT_BINARY');
+        const imageFile = await this.addImageFile(name, name, imageDataBuffer);
 
         // generatedCode.addCode('');
-        generatedCode.addCode(`it.image(x + ${x}, y + ${y}, id(${imageId}));`);
+        generatedCode.addCode(`it.image(x + ${x}, y + ${y}, id(${imageFile.imageId}));`);
     }
 
     async processText(node, parentNode, generatedCode) {
