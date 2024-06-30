@@ -2,6 +2,8 @@
 Generates YML and C++ code for an [ESPHome display](https://esphome.io/components/display/) from a Figma document
 
 
+# 🚧 STILL WORK IN PROGRESS! 🚧
+
 TODO add "before and after" picture
 
 ## Features
